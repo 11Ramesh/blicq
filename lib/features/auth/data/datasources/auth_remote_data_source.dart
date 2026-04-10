@@ -71,20 +71,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<UserModel> signInWithApple() async {
     try {
-      final appleCredential = await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-      );
-
-      final OAuthProvider oAuthProvider = OAuthProvider('apple.com');
-      final AuthCredential credential = oAuthProvider.credential(
-        idToken: appleCredential.identityToken,
-        accessToken: appleCredential.authorizationCode,
-      );
-
-      final UserCredential userCredential = await _firebaseAuth.signInWithCredential(credential);
+      final AppleAuthProvider appleProvider = AppleAuthProvider();
+      
+      // Using signInWithProvider ensures it works on both iOS (native) and Android (web-based)
+      final UserCredential userCredential = await _firebaseAuth.signInWithProvider(appleProvider);
       final User? user = userCredential.user;
 
       if (user == null) {
@@ -98,6 +88,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         photoUrl: user.photoURL,
       );
     } catch (e) {
+      print("Apple Sign In Error: $e");
       throw AuthFailure(e.toString());
     }
   }
