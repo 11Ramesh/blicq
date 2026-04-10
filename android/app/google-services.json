@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1050179951765",
+    "firebase_url": "https://blicq-250bf-default-rtdb.firebaseio.com",
+    "project_id": "blicq-250bf",
+    "storage_bucket": "blicq-250bf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1050179951765:android:e15c8a97660852025c4f9c",
+        "android_client_info": {
+          "package_name": "com.example.blicq"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1050179951765-4t4ll71c8lfjshiage21utftk58mtf5a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.blicq",
+            "certificate_hash": "4f5176d3873e3a8a947787911fcb0a142bd958e4"
+          }
+        },
+        {
+          "client_id": "1050179951765-hba5hgfqcna2017c9n92tcfs4d5spa3q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCl19qJdwJoxkukZaIjZNthpEe58dEFQZY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1050179951765-hba5hgfqcna2017c9n92tcfs4d5spa3q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
