@@ -1,76 +1,22 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:blicq/core/constants/size_config.dart';
 import 'package:blicq/core/utils/theme.dart';
 import 'package:blicq/core/common/beacon/ibeacon_service.dart';
-import 'package:blicq/init_dependencies.dart';
 import 'package:blicq/core/common/widgets/stat_card_widget.dart';
 import 'package:blicq/core/common/widgets/text_widget.dart';
 import 'package:blicq/core/common/widgets/sub_text_widget.dart';
 
-class ScanPage extends StatefulWidget {
-  const ScanPage({super.key});
+class ScanPage extends StatelessWidget {
+  final List<BeaconModel> detectedBeacons;
+  final int strongestRSSI;
+  final VoidCallback onRefresh;
 
-  @override
-  State<ScanPage> createState() => _ScanPageState();
-}
-
-class _ScanPageState extends State<ScanPage> {
-  final IBeaconService _beaconService = serviceLocator<IBeaconService>();
-  StreamSubscription? _beaconSubscription;
-  final List<BeaconModel> _detectedBeacons = [];
-  int _strongestRSSI = -100;
-
-  final Map<String, DateTime> _lastSeenTimes = {};
-  final Duration _persistenceTimeout = const Duration(seconds: 10);
-
-  @override
-  void initState() {
-    super.initState();
-    _startScanning();
-  }
-
-  void _startScanning() {
-    _beaconSubscription?.cancel();
-    _beaconSubscription = _beaconService.startScanning().listen((newBeacons) {
-      if (!mounted) return;
-
-      setState(() {
-        final now = DateTime.now();
-        
-        for (final beacon in newBeacons) {
-          final key = '${beacon.uuid}_${beacon.major}_${beacon.minor}';
-          _lastSeenTimes[key] = now;
-          
-          final index = _detectedBeacons.indexWhere((e) => '${e.uuid}_${e.major}_${e.minor}' == key);
-          if (index != -1) {
-            _detectedBeacons[index] = beacon;
-          } else {
-            _detectedBeacons.add(beacon);
-          }
-        }
-
-        _detectedBeacons.removeWhere((beacon) {
-          final key = '${beacon.uuid}_${beacon.major}_${beacon.minor}';
-          final lastSeen = _lastSeenTimes[key];
-          return lastSeen == null || now.difference(lastSeen) > _persistenceTimeout;
-        });
-
-        if (_detectedBeacons.isNotEmpty) {
-          _strongestRSSI = _detectedBeacons.map((e) => e.rssi).reduce((a, b) => a > b ? a : b);
-        } else {
-          _strongestRSSI = -100;
-        }
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _beaconSubscription?.cancel();
-    _beaconService.stopScanning();
-    super.dispose();
-  }
+  const ScanPage({
+    super.key,
+    required this.detectedBeacons,
+    required this.strongestRSSI,
+    required this.onRefresh,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -131,14 +77,14 @@ class _ScanPageState extends State<ScanPage> {
         Expanded(
           child: StatCardWidget(
             label: 'ACTIVE NODES',
-            value: _detectedBeacons.length.toString(),
+            value: detectedBeacons.length.toString(),
           ),
         ),
         const SizedBox(width: 15),
         Expanded(
           child: StatCardWidget(
             label: 'STRONGEST RSSI',
-            value: '$_strongestRSSI dBm',
+            value: '$strongestRSSI dBm',
             backgroundColor: AppTheme.primaryBlue,
             textColor: Colors.white,
           ),
@@ -159,13 +105,7 @@ class _ScanPageState extends State<ScanPage> {
           ],
         ),
         TextButton.icon(
-          onPressed: () {
-            setState(() {
-              _detectedBeacons.clear();
-              _lastSeenTimes.clear();
-            });
-            _startScanning();
-          },
+          onPressed: onRefresh,
           icon: const Icon(Icons.refresh, size: 16),
           label: const Text('REFRESH'),
           style: TextButton.styleFrom(
@@ -178,7 +118,7 @@ class _ScanPageState extends State<ScanPage> {
   }
 
   Widget _buildBeaconsList() {
-    if (_detectedBeacons.isEmpty) {
+    if (detectedBeacons.isEmpty) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.only(top: 40),
@@ -196,10 +136,10 @@ class _ScanPageState extends State<ScanPage> {
     return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: _detectedBeacons.length,
+      itemCount: detectedBeacons.length,
       separatorBuilder: (_, __) => const SizedBox(height: 15),
       itemBuilder: (context, index) {
-        return _buildBeaconCard(_detectedBeacons[index]);
+        return _buildBeaconCard(detectedBeacons[index]);
       },
     );
   }

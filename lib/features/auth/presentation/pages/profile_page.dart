@@ -9,7 +9,14 @@ import 'package:blicq/core/common/widgets/sub_text_widget.dart';
 import 'package:blicq/core/common/widgets/primary_button_widget.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+  final int activeNodes;
+  final String signalHealth;
+
+  const ProfilePage({
+    super.key,
+    required this.activeNodes,
+    required this.signalHealth,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +44,10 @@ class ProfilePage extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: SizeConfig.widthPercentage(5)),
                 child: Row(
-                  children: const [
-                    Expanded(child: StatCardWidget(label: 'ACTIVE NODES', value: '12')),
-                    SizedBox(width: 15),
-                    Expanded(child: StatCardWidget(label: 'SIGNAL HEALTH', value: '98%')),
+                  children: [
+                    Expanded(child: StatCardWidget(label: 'ACTIVE NODES', value: activeNodes.toString())),
+                    const SizedBox(width: 15),
+                    Expanded(child: StatCardWidget(label: 'SIGNAL HEALTH', value: signalHealth)),
                   ],
                 ),
               ),
