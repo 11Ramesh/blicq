@@ -4,6 +4,9 @@ import 'package:blicq/core/constants/size_config.dart';
 import 'package:blicq/core/utils/theme.dart';
 import 'package:blicq/core/common/beacon/ibeacon_service.dart';
 import 'package:blicq/init_dependencies.dart';
+import 'package:blicq/core/common/widgets/stat_card_widget.dart';
+import 'package:blicq/core/common/widgets/text_widget.dart';
+import 'package:blicq/core/common/widgets/sub_text_widget.dart';
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -112,36 +115,11 @@ class _ScanPageState extends State<ScanPage> {
             ),
           ),
           SizedBox(height: SizeConfig.heightPercentage(2)),
-          Text(
-            'STATUS: ACTIVE',
-            style: TextStyle(
-              color: AppTheme.primaryBlue,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 2,
-              fontSize: SizeConfig.widthPercentage(3),
-            ),
-          ),
+          const SubTextWidget(text: 'STATUS: ACTIVE'),
           const SizedBox(height: 5),
-          Text(
-            'Precision Scanning',
-            style: TextStyle(
-              color: AppTheme.textDark,
-              fontWeight: FontWeight.bold,
-              fontSize: SizeConfig.widthPercentage(6),
-            ),
-          ),
+          const TextWidget(text: 'Precision Scanning'),
           SizedBox(height: SizeConfig.heightPercentage(1)),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: SizeConfig.widthPercentage(10)),
-            child: Text(
-              'Actively monitoring Bluetooth Low Energy signals in your immediate perimeter.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppTheme.textLight,
-                fontSize: SizeConfig.widthPercentage(3.2),
-              ),
-            ),
-          ),
+          const SubTextWidget(text: 'Actively monitoring Bluetooth Low Energy signals in your immediate perimeter.'),
         ],
       ),
     );
@@ -151,62 +129,21 @@ class _ScanPageState extends State<ScanPage> {
     return Row(
       children: [
         Expanded(
-          child: _buildStatCard(
-            'ACTIVE NODES',
-            _detectedBeacons.length.toString(),
-            Colors.white,
-            AppTheme.textDark,
+          child: StatCardWidget(
+            label: 'ACTIVE NODES',
+            value: _detectedBeacons.length.toString(),
           ),
         ),
         const SizedBox(width: 15),
         Expanded(
-          child: _buildStatCard(
-            'STRONGEST RSSI',
-            '$_strongestRSSI dBm',
-            AppTheme.primaryBlue,
-            Colors.white,
+          child: StatCardWidget(
+            label: 'STRONGEST RSSI',
+            value: '$_strongestRSSI dBm',
+            backgroundColor: AppTheme.primaryBlue,
+            textColor: Colors.white,
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildStatCard(String label, String value, Color bgColor, Color textColor) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: textColor.withOpacity(0.7),
-              fontWeight: FontWeight.bold,
-              fontSize: SizeConfig.widthPercentage(2.5),
-            ),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            value,
-            style: TextStyle(
-              color: textColor,
-              fontWeight: FontWeight.bold,
-              fontSize: SizeConfig.widthPercentage(5.5),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -216,22 +153,9 @@ class _ScanPageState extends State<ScanPage> {
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Detected Beacons',
-              style: TextStyle(
-                color: AppTheme.textDark,
-                fontWeight: FontWeight.bold,
-                fontSize: SizeConfig.widthPercentage(4.5),
-              ),
-            ),
-            Text(
-              'Nearby localized identifiers',
-              style: TextStyle(
-                color: AppTheme.textLight,
-                fontSize: SizeConfig.widthPercentage(3),
-              ),
-            ),
+          children: const [
+            TextWidget(text: 'Detected Beacons'),
+            SubTextWidget(text: 'Nearby localized identifiers'),
           ],
         ),
         TextButton.icon(
