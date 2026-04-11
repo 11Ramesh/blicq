@@ -27,18 +27,44 @@ class _HomePageState extends State<HomePage> {
     _startScanning();
   }
 
+  final Map<String, DateTime> _lastSeenTimes = {};
+  final Duration _persistenceTimeout = const Duration(seconds: 10);
+
   void _startScanning() {
-    _beaconSubscription = _beaconService.startScanning().listen((beacons) {
-      if (mounted) {
-        setState(() {
-          _detectedBeacons = beacons;
-          if (beacons.isNotEmpty) {
-            _strongestRSSI = beacons.map((e) => e.rssi).reduce((a, b) => a > b ? a : b);
+    _beaconSubscription?.cancel();
+    _beaconSubscription = _beaconService.startScanning().listen((newBeacons) {
+      if (!mounted) return;
+
+      setState(() {
+        final now = DateTime.now();
+        
+        // 1. Update/Add new beacons
+        for (final beacon in newBeacons) {
+          final key = '${beacon.uuid}_${beacon.major}_${beacon.minor}';
+          _lastSeenTimes[key] = now;
+          
+          final index = _detectedBeacons.indexWhere((e) => '${e.uuid}_${e.major}_${e.minor}' == key);
+          if (index != -1) {
+            _detectedBeacons[index] = beacon; // Update existing
           } else {
-            _strongestRSSI = -100;
+            _detectedBeacons.add(beacon); // Add new
           }
+        }
+
+        // 2. Prune beacons not seen within timeout
+        _detectedBeacons.removeWhere((beacon) {
+          final key = '${beacon.uuid}_${beacon.major}_${beacon.minor}';
+          final lastSeen = _lastSeenTimes[key];
+          return lastSeen == null || now.difference(lastSeen) > _persistenceTimeout;
         });
-      }
+
+        // 3. Update Stats
+        if (_detectedBeacons.isNotEmpty) {
+          _strongestRSSI = _detectedBeacons.map((e) => e.rssi).reduce((a, b) => a > b ? a : b);
+        } else {
+          _strongestRSSI = -100;
+        }
+      });
     });
   }
 
@@ -267,7 +293,13 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         TextButton.icon(
-          onPressed: () => _startScanning(),
+          onPressed: () {
+            setState(() {
+              _detectedBeacons.clear();
+              _lastSeenTimes.clear();
+            });
+            _startScanning();
+          },
           icon: const Icon(Icons.refresh, size: 16),
           label: const Text('REFRESH'),
           style: TextButton.styleFrom(
