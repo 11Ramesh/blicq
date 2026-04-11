@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:blicq/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:blicq/features/auth/presentation/pages/home_page.dart';
+import 'package:blicq/features/auth/presentation/pages/setup_page.dart';
 import 'package:blicq/features/auth/presentation/pages/login_page.dart';
+import 'package:blicq/features/auth/presentation/pages/home_page.dart';
 import 'package:blicq/core/constants/size_config.dart';
 
 class AuthGate extends StatelessWidget {
@@ -14,7 +15,7 @@ class AuthGate extends StatelessWidget {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthAuthenticated) {
-          return const HomePage();
+          return state.isNewLogin ? const SetupPage() : const HomePage();
         } else if (state is AuthUnauthenticated || state is AuthInitial) {
           return const LoginPage();
         } else if (state is AuthLoading) {

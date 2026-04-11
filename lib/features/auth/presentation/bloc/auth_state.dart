@@ -14,10 +14,12 @@ final class AuthLoading extends AuthState {}
 
 final class AuthAuthenticated extends AuthState {
   final UserEntity user;
-  const AuthAuthenticated(this.user);
+  final bool isNewLogin;
+  
+  const AuthAuthenticated(this.user, {this.isNewLogin = false});
 
   @override
-  List<Object?> get props => [user];
+  List<Object?> get props => [user, isNewLogin];
 }
 
 final class AuthUnauthenticated extends AuthState {}

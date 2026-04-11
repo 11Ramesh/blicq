@@ -10,6 +10,8 @@ import 'package:blicq/features/auth/domain/usecases/user_sign_in_with_apple.dart
 import 'package:blicq/features/auth/domain/usecases/user_sign_in_with_google.dart';
 import 'package:blicq/features/auth/domain/usecases/user_sign_out.dart';
 import 'package:blicq/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:blicq/core/common/beacon/ibeacon_service.dart';
+import 'package:blicq/core/common/beacon/flutter_ibeacon_service.dart';
 
 final serviceLocator = GetIt.instance;
 
@@ -21,6 +23,11 @@ Future<void> initDependencies() async {
   await GoogleSignIn.instance.initialize();
   serviceLocator.registerLazySingleton(() => FirebaseAuth.instance);
   serviceLocator.registerLazySingleton(() => GoogleSignIn.instance);
+
+  // iBeacon Service
+  final ibeaconService = FlutterIBeaconService();
+  await ibeaconService.initialize();
+  serviceLocator.registerLazySingleton<IBeaconService>(() => ibeaconService);
 }
 
 void _initAuth() {

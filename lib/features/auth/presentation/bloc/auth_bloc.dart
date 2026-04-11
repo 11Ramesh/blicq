@@ -48,7 +48,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     
     result.fold(
       (failure) => emit(AuthError(failure.message)),
-      (user) => emit(AuthAuthenticated(user)),
+      (user) => emit(AuthAuthenticated(user, isNewLogin: true)),
     );
   }
 
@@ -60,7 +60,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await _userSignInWithApple(NoParams());
     result.fold(
       (failure) => emit(AuthError(failure.message)),
-      (user) => emit(AuthAuthenticated(user)),
+      (user) => emit(AuthAuthenticated(user, isNewLogin: true)),
     );
   }
 
@@ -78,7 +78,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) {
     if (event.user != null) {
-      emit(AuthAuthenticated(event.user!));
+      emit(AuthAuthenticated(event.user!, isNewLogin: false));
     } else {
       emit(AuthUnauthenticated());
     }
