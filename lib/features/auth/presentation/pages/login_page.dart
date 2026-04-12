@@ -10,8 +10,32 @@ import 'package:blicq/core/common/widgets/sub_text_widget.dart';
 import 'package:blicq/core/common/widgets/text_field_widget.dart';
 import 'package:blicq/core/common/widgets/link_button_widget.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _emailController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  void _onLogin() {
+    final email = _emailController.text.trim();
+    if (email.isNotEmpty) {
+      // For "test purpose" as mentioned by the user, we use a default password
+      // or they can add a password field later.
+      context.read<AuthBloc>().add(
+        AuthEmailSignInRequested(email: email, password: 'password123'),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +110,7 @@ class LoginPage extends StatelessWidget {
                     },
                   ),
                   SizedBox(height: SizeConfig.heightPercentage(4)),
-                  
+
                   // Divider
                   Row(
                     children: [
@@ -107,10 +131,16 @@ class LoginPage extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: SizeConfig.heightPercentage(4)),
-                  
-                  const TextFieldWidget(hintText: 'Enter your email'),
+
+                  TextFieldWidget(
+                    hintText: 'Enter your email',
+                    controller: _emailController,
+                    onSubmit: () {
+                      _onLogin();
+                    },
+                  ),
                   SizedBox(height: SizeConfig.heightPercentage(3)),
-                  
+
                   // Secure Badge
                   Container(
                     padding: EdgeInsets.symmetric(

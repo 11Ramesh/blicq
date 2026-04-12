@@ -7,6 +7,7 @@ import 'package:blicq/features/auth/data/repositories/auth_repository_impl.dart'
 import 'package:blicq/features/auth/domain/repositories/auth_repository.dart';
 import 'package:blicq/features/auth/domain/usecases/get_current_user.dart';
 import 'package:blicq/features/auth/domain/usecases/user_sign_in_with_apple.dart';
+import 'package:blicq/features/auth/domain/usecases/user_sign_in_with_email.dart';
 import 'package:blicq/features/auth/domain/usecases/user_sign_in_with_google.dart';
 import 'package:blicq/features/auth/domain/usecases/user_sign_out.dart';
 import 'package:blicq/features/auth/presentation/bloc/auth_bloc.dart';
@@ -49,6 +50,7 @@ void _initAuth() {
   // Usecases
   serviceLocator.registerFactory(() => UserSignInWithGoogle(serviceLocator()));
   serviceLocator.registerFactory(() => UserSignInWithApple(serviceLocator()));
+  serviceLocator.registerFactory(() => UserSignInWithEmail(serviceLocator()));
   serviceLocator.registerFactory(() => UserSignOut(serviceLocator()));
   serviceLocator.registerFactory(() => GetCurrentUser(serviceLocator()));
 
@@ -57,6 +59,7 @@ void _initAuth() {
     () => AuthBloc(
       userSignInWithGoogle: serviceLocator(),
       userSignInWithApple: serviceLocator(),
+      userSignInWithEmail: serviceLocator(),
       userSignOut: serviceLocator(),
       getCurrentUser: serviceLocator(),
     ),

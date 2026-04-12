@@ -5,11 +5,13 @@ import 'package:blicq/core/utils/theme.dart';
 class TextFieldWidget extends StatelessWidget {
   final String hintText;
   final TextEditingController? controller;
-  
+  final VoidCallback? onSubmit;
+
   const TextFieldWidget({
-    super.key, 
+    super.key,
     required this.hintText,
     this.controller,
+    this.onSubmit,
   });
 
   @override
@@ -36,9 +38,12 @@ class TextFieldWidget extends StatelessWidget {
               color: Colors.white,
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              Icons.arrow_forward_rounded, 
-              size: SizeConfig.widthPercentage(5),
+            child: IconButton(
+              icon: Icon(
+                Icons.arrow_forward_rounded,
+                size: SizeConfig.widthPercentage(3),
+              ),
+              onPressed: onSubmit,
             ),
           ),
         ),

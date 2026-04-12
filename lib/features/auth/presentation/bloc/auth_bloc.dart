@@ -6,6 +6,7 @@ import 'package:blicq/core/usecase/usecase.dart';
 import 'package:blicq/features/auth/domain/entities/user.dart';
 import 'package:blicq/features/auth/domain/usecases/get_current_user.dart';
 import 'package:blicq/features/auth/domain/usecases/user_sign_in_with_apple.dart';
+import 'package:blicq/features/auth/domain/usecases/user_sign_in_with_email.dart';
 import 'package:blicq/features/auth/domain/usecases/user_sign_in_with_google.dart';
 import 'package:blicq/features/auth/domain/usecases/user_sign_out.dart';
 
@@ -15,6 +16,7 @@ part 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final UserSignInWithGoogle _userSignInWithGoogle;
   final UserSignInWithApple _userSignInWithApple;
+  final UserSignInWithEmail _userSignInWithEmail;
   final UserSignOut _userSignOut;
   final GetCurrentUser _getCurrentUser;
   StreamSubscription<UserEntity?>? _userSubscription;
@@ -22,15 +24,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc({
     required UserSignInWithGoogle userSignInWithGoogle,
     required UserSignInWithApple userSignInWithApple,
+    required UserSignInWithEmail userSignInWithEmail,
     required UserSignOut userSignOut,
     required GetCurrentUser getCurrentUser,
   })  : _userSignInWithGoogle = userSignInWithGoogle,
         _userSignInWithApple = userSignInWithApple,
+        _userSignInWithEmail = userSignInWithEmail,
         _userSignOut = userSignOut,
         _getCurrentUser = getCurrentUser,
         super(AuthInitial()) {
     on<AuthGoogleSignInRequested>(_onGoogleSignIn);
     on<AuthAppleSignInRequested>(_onAppleSignIn);
+    on<AuthEmailSignInRequested>(_onEmailSignIn);
     on<AuthBackRequested>(_onSignOut);
     on<AuthUserChanged>(_onUserChanged);
 
@@ -58,6 +63,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(AuthLoading());
     final result = await _userSignInWithApple(NoParams());
+    result.fold(
+      (failure) => emit(AuthError(failure.message)),
+      (user) => emit(AuthAuthenticated(user, isNewLogin: true)),
+    );
+  }
+
+  Future<void> _onEmailSignIn(
+    AuthEmailSignInRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    final result = await _userSignInWithEmail(SignInWithEmailParams(
+      email: event.email,
+      password: event.password,
+    ));
     result.fold(
       (failure) => emit(AuthError(failure.message)),
       (user) => emit(AuthAuthenticated(user, isNewLogin: true)),

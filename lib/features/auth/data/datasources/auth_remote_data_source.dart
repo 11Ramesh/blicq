@@ -7,6 +7,7 @@ import 'package:blicq/core/error/failures.dart';
 abstract interface class AuthRemoteDataSource {
   Future<UserModel> signInWithGoogle();
   Future<UserModel> signInWithApple();
+  Future<UserModel> signInWithEmail(String email, String password);
   Stream<UserModel?> get currentUser;
   Future<void> signOut();
 }
@@ -89,6 +90,52 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
     } catch (e) {
       print("Apple Sign In Error: $e");
+      throw AuthFailure(e.toString());
+    }
+  }
+
+  @override
+  Future<UserModel> signInWithEmail(String email, String password) async {
+    try {
+      final UserCredential userCredential = await _firebaseAuth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      final User? user = userCredential.user;
+
+      if (user == null) {
+        throw AuthFailure('User is null after email sign in');
+      }
+
+      return UserModel(
+        id: user.uid,
+        email: user.email ?? '',
+        name: user.displayName ?? '',
+        photoUrl: user.photoURL,
+      );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found' || e.code == 'wrong-password' || e.code == 'invalid-credential') {
+        // Try to create user if it's for "test purpose" as the user mentioned
+        try {
+          final UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+            email: email,
+            password: password,
+          );
+          final User? user = userCredential.user;
+          if (user != null) {
+            return UserModel(
+              id: user.uid,
+              email: user.email ?? '',
+              name: user.displayName ?? '',
+              photoUrl: user.photoURL,
+            );
+          }
+        } catch (signUpError) {
+          throw AuthFailure(signUpError.toString());
+        }
+      }
+      throw AuthFailure(e.message ?? 'Authentication failed');
+    } catch (e) {
       throw AuthFailure(e.toString());
     }
   }

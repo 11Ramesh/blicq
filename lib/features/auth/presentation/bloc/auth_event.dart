@@ -11,6 +11,14 @@ sealed class AuthEvent extends Equatable {
 final class AuthGoogleSignInRequested extends AuthEvent {}
 
 final class AuthAppleSignInRequested extends AuthEvent {}
+final class AuthEmailSignInRequested extends AuthEvent {
+  final String email;
+  final String password;
+  const AuthEmailSignInRequested({required this.email, required this.password});
+
+  @override
+  List<Object?> get props => [email, password];
+}
 
 final class AuthBackRequested extends AuthEvent {}
 

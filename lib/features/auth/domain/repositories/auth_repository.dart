@@ -5,6 +5,7 @@ import 'package:blicq/features/auth/domain/entities/user.dart';
 abstract interface class AuthRepository {
   Future<Either<Failure, UserEntity>> signInWithGoogle();
   Future<Either<Failure, UserEntity>> signInWithApple();
+  Future<Either<Failure, UserEntity>> signInWithEmail(String email, String password);
   Stream<UserEntity?> get currentUser;
   Future<void> signOut();
 }
