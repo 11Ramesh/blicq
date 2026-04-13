@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:beacon_scanner/beacon_scanner.dart';
+import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'ibeacon_service.dart';
 
@@ -117,6 +118,20 @@ class FlutterIBeaconService implements IBeaconService {
   Future<bool> isBluetoothEnabled() async {
     final state = await BeaconScanner.instance.bluetoothState;
     return state == BluetoothState.stateOn;
+  }
+
+  @override
+  Future<void> openBluetoothSettings() async {
+    if (Platform.isAndroid) {
+      const channel = MethodChannel('com.example.blicq/bluetooth');
+      try {
+        await channel.invokeMethod('enableBluetooth');
+      } catch (e) {
+        await openAppSettings();
+      }
+    } else {
+      await openAppSettings();
+    }
   }
 
   String _mapProximity(Proximity proximity) {

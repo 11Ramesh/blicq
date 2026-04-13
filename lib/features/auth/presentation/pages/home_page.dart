@@ -29,7 +29,44 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _checkBluetoothStatus();
     _startScanning();
+  }
+
+  Future<void> _checkBluetoothStatus() async {
+    final isEnabled = await _beaconService.isBluetoothEnabled();
+    if (!isEnabled && mounted) {
+      _showBluetoothDialog();
+    }
+  }
+
+  void _showBluetoothDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text('Bluetooth Required'),
+        content: const Text('Bluetooth is required to scan for nearby beacons. Please enable it to continue.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('MAYBE LATER'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryBlue,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+              _beaconService.openBluetoothSettings();
+            },
+            child: const Text('ENABLE', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
   }
 
   void _startScanning() {
@@ -104,7 +141,7 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: _currentIndex == 0 
         ? FloatingActionButton(
-            onPressed: () {},
+            onPressed: _checkBluetoothStatus,
             backgroundColor: AppTheme.primaryBlue,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             child: const Icon(Icons.add, color: Colors.white),
@@ -140,6 +177,13 @@ class _HomePageState extends State<HomePage> {
           fontSize: SizeConfig.widthPercentage(4.5),
         ),
       ),
+      actions: [
+        if (_currentIndex == 0)
+          IconButton(
+            onPressed: _checkBluetoothStatus,
+            icon: const Icon(Icons.bluetooth, color: AppTheme.primaryBlue),
+          ),
+      ],
     );
   }
 

@@ -49,6 +49,9 @@ abstract class IBeaconService {
 
   /// Returns true if Bluetooth is enabled and available for scanning.
   Future<bool> isBluetoothEnabled();
+
+  /// Opens the device settings to enable Bluetooth.
+  Future<void> openBluetoothSettings();
 }
 
 /// A model representing a monitoring event (entry/exit).
