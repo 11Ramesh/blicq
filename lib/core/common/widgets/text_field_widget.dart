@@ -21,19 +21,16 @@ class TextFieldWidget extends StatelessWidget {
         color: AppTheme.inputBg,
         borderRadius: BorderRadius.circular(SizeConfig.widthPercentage(4)),
       ),
-      padding: EdgeInsets.symmetric(
-        horizontal: SizeConfig.widthPercentage(4),
-        vertical: SizeConfig.heightPercentage(0.5),
-      ),
+      padding: EdgeInsets.symmetric(horizontal: SizeConfig.widthPercentage(4)),
       child: TextField(
         controller: controller,
         style: TextStyle(fontSize: SizeConfig.widthPercentage(4)),
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(fontSize: SizeConfig.widthPercentage(3.5)),
+          hintStyle: TextStyle(fontSize: SizeConfig.widthPercentage(4.0)),
           border: InputBorder.none,
           suffixIcon: Container(
-            margin: EdgeInsets.all(SizeConfig.widthPercentage(2)),
+            margin: EdgeInsets.all(SizeConfig.widthPercentage(0.2)),
             decoration: const BoxDecoration(
               color: Colors.white,
               shape: BoxShape.circle,
@@ -41,7 +38,7 @@ class TextFieldWidget extends StatelessWidget {
             child: IconButton(
               icon: Icon(
                 Icons.arrow_forward_rounded,
-                size: SizeConfig.widthPercentage(3),
+                size: SizeConfig.widthPercentage(4),
               ),
               onPressed: onSubmit,
             ),

@@ -46,7 +46,9 @@ class _LoginPageState extends State<LoginPage> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: SizeConfig.widthPercentage(6)),
+            padding: EdgeInsets.symmetric(
+              horizontal: SizeConfig.widthPercentage(6),
+            ),
             child: SizedBox(
               height: height - MediaQuery.of(context).padding.top,
               child: Column(
@@ -59,7 +61,9 @@ class _LoginPageState extends State<LoginPage> {
                     height: SizeConfig.widthPercentage(20),
                     decoration: BoxDecoration(
                       color: AppTheme.primaryBlue,
-                      borderRadius: BorderRadius.circular(SizeConfig.widthPercentage(5)),
+                      borderRadius: BorderRadius.circular(
+                        SizeConfig.widthPercentage(5),
+                      ),
                       boxShadow: [
                         BoxShadow(
                           color: AppTheme.primaryBlue.withOpacity(0.3),
@@ -77,15 +81,16 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   SizedBox(height: SizeConfig.heightPercentage(5)),
-                  
+
                   const TextWidget(text: 'Welcome to Proximity Aware'),
                   SizedBox(height: SizeConfig.heightPercentage(2)),
-                  
+
                   const SubTextWidget(
-                    text: 'Stay connected with precision location tracking and real-time proximity alerts.',
+                    text:
+                        'Stay connected with precision location tracking and real-time proximity alerts.',
                   ),
                   SizedBox(height: SizeConfig.heightPercentage(6)),
-                  
+
                   // Apple Button
                   SocialButton(
                     icon: FontAwesomeIcons.apple,
@@ -97,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
                   SizedBox(height: SizeConfig.heightPercentage(2)),
-                  
+
                   // Google Button
                   SocialButton(
                     icon: FontAwesomeIcons.google,
@@ -114,12 +119,17 @@ class _LoginPageState extends State<LoginPage> {
                   // Divider
                   Row(
                     children: [
-                      const Expanded(child: Divider(color: AppTheme.dividerGrey)),
+                      const Expanded(
+                        child: Divider(color: AppTheme.dividerGrey),
+                      ),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: SizeConfig.widthPercentage(4)),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: SizeConfig.widthPercentage(4),
+                        ),
                         child: Text(
                           'OR ACCESS VIA',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.2,
@@ -127,7 +137,9 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                         ),
                       ),
-                      const Expanded(child: Divider(color: AppTheme.dividerGrey)),
+                      const Expanded(
+                        child: Divider(color: AppTheme.dividerGrey),
+                      ),
                     ],
                   ),
                   SizedBox(height: SizeConfig.heightPercentage(4)),
@@ -149,14 +161,16 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFF0F4FC),
-                      borderRadius: BorderRadius.circular(SizeConfig.widthPercentage(3)),
+                      borderRadius: BorderRadius.circular(
+                        SizeConfig.widthPercentage(3),
+                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          Icons.verified_user_outlined, 
-                          size: SizeConfig.widthPercentage(4), 
+                          Icons.verified_user_outlined,
+                          size: SizeConfig.widthPercentage(4),
                           color: AppTheme.primaryBlue,
                         ),
                         SizedBox(width: SizeConfig.widthPercentage(2)),
@@ -171,8 +185,8 @@ class _LoginPageState extends State<LoginPage> {
                       ],
                     ),
                   ),
-                  const Spacer(),
-                  
+                  // const Spacer(),
+
                   // Footer
                   Text(
                     'By signing in, you agree to our',
@@ -185,14 +199,19 @@ class _LoginPageState extends State<LoginPage> {
                         text: 'Terms of Service',
                         onPressed: () {},
                       ),
-                      Text(' and ', style: TextStyle(fontSize: SizeConfig.widthPercentage(3))),
+                      Text(
+                        ' and ',
+                        style: TextStyle(
+                          fontSize: SizeConfig.widthPercentage(3),
+                        ),
+                      ),
                       LinkButtonWidget(
                         text: 'Privacy Policy',
                         onPressed: () {},
                       ),
                     ],
                   ),
-                  SizedBox(height: SizeConfig.heightPercentage(2.5)),
+                  // SizedBox(height: SizeConfig.heightPercentage(2.5)),
                 ],
               ),
             ),

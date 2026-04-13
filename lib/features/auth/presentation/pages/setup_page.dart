@@ -42,7 +42,7 @@ class _SetupPageState extends State<SetupPage> {
     await _beaconService.requestPermissions();
     final hasPermissions = await _beaconService.checkPermissions();
     if (hasPermissions) {
-       if (mounted) {
+      if (mounted) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const HomePage()),
@@ -52,7 +52,9 @@ class _SetupPageState extends State<SetupPage> {
       // Show snackbar or message if permissions not granted
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please grant all permissions to continue')),
+          const SnackBar(
+            content: Text('Please grant all permissions to continue'),
+          ),
         );
       }
     }
@@ -163,7 +165,9 @@ class _SetupPageState extends State<SetupPage> {
               PrimaryButtonWidget(
                 text: 'Grant Permissions',
                 icon: Icons.arrow_forward,
-                onPressed: _handleGrantPermissions,
+                onPressed: (isLocationEnabled && isBluetoothEnabled)
+                    ? _handleGrantPermissions
+                    : () {},
               ),
               SizedBox(height: SizeConfig.heightPercentage(3)),
               // Footer
@@ -194,5 +198,4 @@ class _SetupPageState extends State<SetupPage> {
       ),
     );
   }
-
 }

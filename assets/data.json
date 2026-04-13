@@ -1,0 +1,76 @@
+{
+    "alerts": [
+        {
+            "type": "BACKGROUND_DETECTION",
+            "title": "New Beacon Found",
+            "body": "You are near 'Conference Room B'. Open the app for details.",
+            "threshold_meters": 10.0,
+            "current_distance": 8.5,
+            "style": "info_blue",
+            "payload": {
+                "uuid": "E2C56DB5-DFFB-48D2-B060-D0F5A71096E0",
+                "action": "navigate_to_details"
+            }
+        },
+        {
+            "type": "PROXIMITY_THRESHOLD",
+            "title": "Proximity Alert",
+            "body": "Welcome! You are now within 5 meters of the beacon.",
+            "threshold_meters": 5.0,
+            "current_distance": 4.8,
+            "style": "amber_warning",
+            "payload": {
+                "uuid": "E2C56DB5-DFFB-48D2-B060-D0F5A71096E0",
+                "action": "show_welcome_message"
+            }
+        },
+        {
+            "type": "IMMEDIATE_PROXIMITY",
+            "title": "Touchpoint Reached",
+            "body": "You are standing directly at 'Private Office 4'. Tap to check-in.",
+            "threshold_meters": 1.0,
+            "current_distance": 0.8,
+            "style": "success_green",
+            "payload": {
+                "uuid": "A1221100-3344-4BC2-A901-EE203344CC89",
+                "action": "auto_checkin"
+            }
+        },
+        {
+            "type": "SIGNAL_LOST",
+            "title": "Connection Dropped",
+            "body": "Signal for 'West Wing Lobby' has been lost due to interference.",
+            "threshold_meters": 0.0,
+            "current_distance": -1.0,
+            "style": "error_red",
+            "payload": {
+                "uuid": "F4980120-E4F1-4E7B-9E33-0245648A044B",
+                "action": "mark_as_inactive"
+            }
+        },
+        {
+            "type": "HARDWARE_ERROR",
+            "title": "Bluetooth Disabled",
+            "body": "Scanning has stopped because Bluetooth was turned off mid-scan.",
+            "threshold_meters": 0.0,
+            "current_distance": 0.0,
+            "style": "error_red",
+            "payload": {
+                "uuid": "00000000-0000-0000-0000-000000000000",
+                "action": "open_settings"
+            }
+        },
+        {
+            "type": "PERMISSION_DENIED",
+            "title": "Location Access Required",
+            "body": "Background scanning requires 'Always Allow' location permissions.",
+            "threshold_meters": 0.0,
+            "current_distance": 0.0,
+            "style": "amber_warning",
+            "payload": {
+                "uuid": "00000000-0000-0000-0000-000000000000",
+                "action": "request_permission"
+            }
+        }
+    ]
+}
