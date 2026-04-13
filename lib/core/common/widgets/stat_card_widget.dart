@@ -7,6 +7,7 @@ class StatCardWidget extends StatelessWidget {
   final String value;
   final Color? backgroundColor;
   final Color? textColor;
+  final Color? indicatorColor;
 
   const StatCardWidget({
     super.key,
@@ -14,6 +15,7 @@ class StatCardWidget extends StatelessWidget {
     required this.value,
     this.backgroundColor,
     this.textColor,
+    this.indicatorColor,
   });
 
   @override
@@ -22,7 +24,6 @@ class StatCardWidget extends StatelessWidget {
     final txtColor = textColor ?? AppTheme.textDark;
 
     return Container(
-      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(20),
@@ -34,27 +35,49 @@ class StatCardWidget extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: txtColor.withOpacity(0.5),
-              fontWeight: FontWeight.bold,
-              fontSize: 8,
+      child: IntrinsicHeight(
+        child: Row(
+          children: [
+            if (indicatorColor != null)
+              Container(
+                width: 4,
+                decoration: BoxDecoration(
+                  color: indicatorColor,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    bottomLeft: Radius.circular(20),
+                  ),
+                ),
+              ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: TextStyle(
+                        color: txtColor.withOpacity(0.5),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 8,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      value,
+                      style: TextStyle(
+                        color: txtColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: SizeConfig.widthPercentage(6),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            value,
-            style: TextStyle(
-              color: txtColor,
-              fontWeight: FontWeight.bold,
-              fontSize: SizeConfig.widthPercentage(6),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

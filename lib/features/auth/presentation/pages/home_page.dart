@@ -168,7 +168,10 @@ class _HomePageState extends State<HomePage> {
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
-      centerTitle: true,
+      centerTitle: _currentIndex != 1,
+      leading: _currentIndex == 1 
+          ? const Icon(Icons.sensors, color: AppTheme.primaryBlue) 
+          : null,
       title: Text(
         title,
         style: TextStyle(
@@ -182,6 +185,11 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             onPressed: _checkBluetoothStatus,
             icon: const Icon(Icons.bluetooth, color: AppTheme.primaryBlue),
+          ),
+        if (_currentIndex == 1)
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.tune, color: AppTheme.textDark, size: 20),
           ),
       ],
     );
