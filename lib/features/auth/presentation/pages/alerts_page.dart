@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:blicq/core/common/widgets/sub_text_widget.dart';
+import 'package:blicq/core/common/widgets/text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:blicq/core/constants/size_config.dart';
