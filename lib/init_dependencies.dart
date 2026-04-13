@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get_it/get_it.dart';
 import 'package:blicq/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:blicq/features/auth/data/repositories/auth_repository_impl.dart';
@@ -21,6 +22,8 @@ Future<void> initDependencies() async {
   
   // External
   final firebaseApp = await Firebase.initializeApp();
+  final sharedPreferences = await SharedPreferences.getInstance();
+  serviceLocator.registerLazySingleton(() => sharedPreferences);
   await GoogleSignIn.instance.initialize();
   serviceLocator.registerLazySingleton(() => FirebaseAuth.instance);
   serviceLocator.registerLazySingleton(() => GoogleSignIn.instance);

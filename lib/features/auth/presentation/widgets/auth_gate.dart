@@ -5,6 +5,8 @@ import 'package:blicq/features/auth/presentation/pages/setup_page.dart';
 import 'package:blicq/features/auth/presentation/pages/login_page.dart';
 import 'package:blicq/features/auth/presentation/pages/home_page.dart';
 import 'package:blicq/core/constants/size_config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:blicq/init_dependencies.dart';
 
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
@@ -15,7 +17,8 @@ class AuthGate extends StatelessWidget {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthAuthenticated) {
-          return state.isNewLogin ? const SetupPage() : const HomePage();
+          final isSetupCompleted = serviceLocator<SharedPreferences>().getBool('setup_completed') ?? false;
+          return isSetupCompleted ? const HomePage() : const SetupPage();
         } else if (state is AuthUnauthenticated || state is AuthInitial) {
           return const LoginPage();
         } else if (state is AuthLoading) {

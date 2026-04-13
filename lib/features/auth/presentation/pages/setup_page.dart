@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:blicq/core/constants/size_config.dart';
 import 'package:blicq/core/utils/theme.dart';
 import 'package:blicq/core/common/widgets/text_widget.dart';
@@ -43,6 +44,9 @@ class _SetupPageState extends State<SetupPage> {
     final hasPermissions = await _beaconService.checkPermissions();
     if (hasPermissions) {
       if (mounted) {
+        final prefs = serviceLocator<SharedPreferences>();
+        await prefs.setBool('setup_completed', true);
+        
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const HomePage()),
