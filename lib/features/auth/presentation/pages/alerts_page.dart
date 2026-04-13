@@ -7,7 +7,14 @@ import 'package:blicq/core/common/models/alert_model.dart';
 import 'package:blicq/core/common/widgets/stat_card_widget.dart';
 
 class AlertsPage extends StatefulWidget {
-  const AlertsPage({super.key});
+  final int activeScans;
+  final int nearbyBeacons;
+
+  const AlertsPage({
+    super.key,
+    required this.activeScans,
+    required this.nearbyBeacons,
+  });
 
   @override
   State<AlertsPage> createState() => _AlertsPageState();
@@ -55,6 +62,10 @@ class _AlertsPageState extends State<AlertsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: SizeConfig.heightPercentage(2)),
+              const TextWidget(text: 'Alerts & Activity'),
+              SizedBox(height: SizeConfig.heightPercentage(1)),
+              const SubTextWidget(text: 'Monitor real-time proximity events and node status'),
+              SizedBox(height: SizeConfig.heightPercentage(3)),
               _buildStatsRow(),
               SizedBox(height: SizeConfig.heightPercentage(3)),
               ListView.separated(
@@ -78,10 +89,10 @@ class _AlertsPageState extends State<AlertsPage> {
   Widget _buildStatsRow() {
     return Row(
       children: [
-        const Expanded(
+        Expanded(
           child: StatCardWidget(
             label: 'ACTIVE SCANS',
-            value: '12',
+            value: widget.activeScans.toString().padLeft(2, '0'),
             indicatorColor: AppTheme.primaryBlue,
           ),
         ),
@@ -89,7 +100,7 @@ class _AlertsPageState extends State<AlertsPage> {
         Expanded(
           child: StatCardWidget(
             label: 'NEARBY BEACONS',
-            value: '04',
+            value: widget.nearbyBeacons.toString().padLeft(2, '0'),
             backgroundColor: Colors.white,
             textColor: AppTheme.textDark,
             indicatorColor: Colors.amber[600],

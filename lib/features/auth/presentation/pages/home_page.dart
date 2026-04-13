@@ -125,7 +125,10 @@ class _HomePageState extends State<HomePage> {
         strongestRSSI: _strongestRSSI,
         onRefresh: _onRefresh,
       ),
-      const AlertsPage(),
+      AlertsPage(
+        activeScans: 12,
+        nearbyBeacons: _detectedBeacons.length,
+      ),
       ProfilePage(
         activeNodes: _detectedBeacons.length,
         signalHealth: _calculateSignalHealth(_strongestRSSI),
