@@ -1,5 +1,7 @@
 import 'package:blicq/core/error/failures.dart';
+import 'package:blicq/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blicq/features/auth/presentation/pages/login_page.dart';
+import 'package:blicq/init_dependencies.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:blicq/core/constants/size_config.dart';
@@ -10,6 +12,7 @@ import 'package:blicq/core/common/widgets/primary_button_widget.dart';
 import 'package:blicq/core/common/widgets/permission_tile_widget.dart';
 import 'package:blicq/features/auth/presentation/pages/home_page.dart';
 import 'package:blicq/features/auth/presentation/bloc/setup_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SetupPage extends StatefulWidget {
   const SetupPage({super.key});
@@ -30,6 +33,11 @@ class _SetupPageState extends State<SetupPage> {
     return BlocListener<SetupBloc, SetupState>(
       listener: (context, state) {
         if (state is SetupSuccess) {
+          if (context.mounted) {
+            context.read<AuthBloc>().add(AuthBackRequested());
+          }
+          final prefs = serviceLocator<SharedPreferences>();
+          prefs.setBool('setup_completed', false);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const HomePage()),
