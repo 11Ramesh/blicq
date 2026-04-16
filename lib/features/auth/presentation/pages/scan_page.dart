@@ -160,13 +160,16 @@ class ScanPage extends StatelessWidget {
   }
 
   Widget _buildBeaconCard(BeaconModel beacon) {
+    final bool isCritical = beacon.estimatedDistance <= 5.0;
     final proximityColor = _getProximityColor(beacon.proximity);
+    const goldenColor = Color(0xFFEBB54A);
+    const criticalBg = Color(0xFFFEF7E6);
+    const criticalText = Color(0xFF7D5700);
 
     return Container(
-      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(25),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.03),
@@ -175,95 +178,144 @@ class ScanPage extends StatelessWidget {
           ),
         ],
       ),
-      child: Stack(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Node: ${beacon.uuid.substring(0, 8)}...',
-                    style: TextStyle(
-                      color: AppTheme.textDark,
-                      fontWeight: FontWeight.bold,
-                      fontSize: SizeConfig.widthPercentage(4),
-                    ),
-                  ),
-                  _buildProximityTag(beacon.proximity, proximityColor),
-                ],
-              ),
-              if (beacon.estimatedDistance <= 5.0)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.stars,
-                        color: AppTheme.primaryBlue,
-                        size: 14,
-                      ),
-                      const SizedBox(width: 5),
-                      Text(
-                        'PRECISION RANGE: WITHIN 5M',
-                        style: TextStyle(
-                          color: AppTheme.primaryBlue,
-                          fontWeight: FontWeight.bold,
-                          fontSize: SizeConfig.widthPercentage(2.5),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              const SizedBox(height: 10),
-              Text(
-                (beacon.estimatedDistance <= 5.0)
-                    ? 'UUID: ${beacon.uuid.substring(0, 20)}.....'
-                    : 'UUID: ${beacon.uuid}',
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: SizeConfig.widthPercentage(2.5),
-                ),
-              ),
-              const SizedBox(height: 15),
-              Row(
-                children: [
-                  _buildSubInfo('MAJOR ID', beacon.major.toString()),
-                  const SizedBox(width: 30),
-                  _buildSubInfo('MINOR ID', beacon.minor.toString()),
-                ],
-              ),
-            ],
-          ),
-          Positioned(
-            right: 0,
-            bottom: 0,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  'PRECISION DISTANCE',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: SizeConfig.widthPercentage(2.5),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  '${beacon.estimatedDistance.toStringAsFixed(2)} m',
-                  style: TextStyle(
-                    color: AppTheme.primaryBlue,
-                    fontWeight: FontWeight.bold,
-                    fontSize: SizeConfig.widthPercentage(5),
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Icon(Icons.location_on, color: proximityColor, size: 18),
-              ],
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Row(
+          children: [
+            // Left Accent Bar
+            Container(
+              width: 6,
+              height: 120,
+              color: isCritical ? goldenColor : Colors.grey[300],
             ),
-          ),
-        ],
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${beacon.uuid.substring(0, 8)}...',
+                                style: TextStyle(
+                                  color: AppTheme.textDark,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: SizeConfig.widthPercentage(4.5),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                isCritical
+                                    ? 'UUID: ${beacon.uuid.substring(0, 20)}...'
+                                    : 'UUID: ${beacon.uuid}',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: SizeConfig.widthPercentage(2.8),
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (isCritical)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: criticalBg,
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                Text(
+                                  'CRITICAL',
+                                  style: TextStyle(
+                                    color: criticalText,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 8,
+                                  ),
+                                ),
+                                Text(
+                                  'PROXIMITY',
+                                  style: TextStyle(
+                                    color: criticalText,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 8,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        const SizedBox(width: 8),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              'DISTANCE',
+                              style: TextStyle(
+                                color: criticalText,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 9,
+                              ),
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.alphabetic,
+                              children: [
+                                Text(
+                                  beacon.estimatedDistance.toStringAsFixed(1),
+                                  style: TextStyle(
+                                    color: goldenColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: SizeConfig.widthPercentage(6),
+                                  ),
+                                ),
+                                const SizedBox(width: 1),
+                                Text(
+                                  'm',
+                                  style: TextStyle(
+                                    color: goldenColor,
+                                    fontSize: SizeConfig.widthPercentage(3),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            _buildSubInfo('MAJOR ID', beacon.major.toString()),
+                            const SizedBox(width: 20),
+                            _buildSubInfo('MINOR ID', beacon.minor.toString()),
+                          ],
+                        ),
+                        Icon(
+                          Icons.location_on,
+                          color: isCritical ? goldenColor : proximityColor,
+                          size: 20,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
