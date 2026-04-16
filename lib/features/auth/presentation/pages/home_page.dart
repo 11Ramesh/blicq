@@ -17,7 +17,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
-  
+
   // Beacon State shared between Scan and Profile
   final IBeaconService _beaconService = serviceLocator<IBeaconService>();
   StreamSubscription? _beaconSubscription;
@@ -47,7 +47,9 @@ class _HomePageState extends State<HomePage> {
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: const Text('Bluetooth Required'),
-        content: const Text('Bluetooth is required to scan for nearby beacons. Please enable it to continue.'),
+        content: const Text(
+          'Bluetooth is required to scan for nearby beacons. Please enable it to continue.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -56,7 +58,9 @@ class _HomePageState extends State<HomePage> {
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryBlue,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -79,7 +83,9 @@ class _HomePageState extends State<HomePage> {
         for (final beacon in newBeacons) {
           final key = '${beacon.uuid}_${beacon.major}_${beacon.minor}';
           _lastSeenTimes[key] = now;
-          final index = _detectedBeacons.indexWhere((e) => '${e.uuid}_${e.major}_${e.minor}' == key);
+          final index = _detectedBeacons.indexWhere(
+            (e) => '${e.uuid}_${e.major}_${e.minor}' == key,
+          );
           if (index != -1) {
             _detectedBeacons[index] = beacon;
           } else {
@@ -90,11 +96,14 @@ class _HomePageState extends State<HomePage> {
         _detectedBeacons.removeWhere((beacon) {
           final key = '${beacon.uuid}_${beacon.major}_${beacon.minor}';
           final lastSeen = _lastSeenTimes[key];
-          return lastSeen == null || now.difference(lastSeen) > _persistenceTimeout;
+          return lastSeen == null ||
+              now.difference(lastSeen) > _persistenceTimeout;
         });
 
         if (_detectedBeacons.isNotEmpty) {
-          _strongestRSSI = _detectedBeacons.map((e) => e.rssi).reduce((a, b) => a > b ? a : b);
+          _strongestRSSI = _detectedBeacons
+              .map((e) => e.rssi)
+              .reduce((a, b) => a > b ? a : b);
         } else {
           _strongestRSSI = -100;
         }
@@ -126,8 +135,8 @@ class _HomePageState extends State<HomePage> {
         onRefresh: _onRefresh,
       ),
       AlertsPage(
-        activeScans: 12,
-        nearbyBeacons: _detectedBeacons.length,
+        activeScans: _detectedBeacons.length,
+        nearbyBeacons: _countNearBeacons(_detectedBeacons),
       ),
       ProfilePage(
         activeNodes: _detectedBeacons.length,
@@ -138,18 +147,17 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFD),
       appBar: _buildAppBar(context),
-      body: IndexedStack(
-        index: _currentIndex,
-        children: pages,
-      ),
-      floatingActionButton: _currentIndex == 0 
-        ? FloatingActionButton(
-            onPressed: _checkBluetoothStatus,
-            backgroundColor: AppTheme.primaryBlue,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            child: const Icon(Icons.add, color: Colors.white),
-          )
-        : null,
+      body: IndexedStack(index: _currentIndex, children: pages),
+      floatingActionButton: _currentIndex == 0
+          ? FloatingActionButton(
+              onPressed: _checkBluetoothStatus,
+              backgroundColor: AppTheme.primaryBlue,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: const Icon(Icons.add, color: Colors.white),
+            )
+          : null,
       bottomNavigationBar: _buildBottomNav(),
     );
   }
@@ -163,6 +171,10 @@ class _HomePageState extends State<HomePage> {
     return '${percentage.toInt()}%';
   }
 
+  int _countNearBeacons(List<BeaconModel> beacons) {
+    return beacons.where((b) => b.proximity.toLowerCase() == 'near').length;
+  }
+
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     String title = 'Proximity Aware';
     if (_currentIndex == 1) title = 'Alerts';
@@ -172,8 +184,8 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.transparent,
       elevation: 0,
       centerTitle: _currentIndex != 1,
-      leading: _currentIndex == 1 
-          ? const Icon(Icons.sensors, color: AppTheme.primaryBlue) 
+      leading: _currentIndex == 1
+          ? const Icon(Icons.sensors, color: AppTheme.primaryBlue)
           : null,
       title: Text(
         title,
@@ -219,8 +231,14 @@ class _HomePageState extends State<HomePage> {
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.sensors), label: 'SCAN'),
-          BottomNavigationBarItem(icon: Icon(Icons.notifications_none), label: 'ALERTS'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'PROFILE'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications_none),
+            label: 'ALERTS',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            label: 'PROFILE',
+          ),
         ],
       ),
     );
