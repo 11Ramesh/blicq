@@ -1,10 +1,10 @@
-import 'package:blicq/features/auth/presentation/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:blicq/init_dependencies.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:blicq/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:blicq/features/auth/presentation/bloc/beacon_bloc.dart';
 import 'package:blicq/core/constants/size_config.dart';
 import 'package:blicq/core/utils/theme.dart';
 import 'package:blicq/core/common/widgets/stat_card_widget.dart';
@@ -79,12 +79,11 @@ class ProfilePage extends StatelessWidget {
                 child: PrimaryButtonWidget(
                   text: 'Sign Out',
                   icon: Icons.logout,
-                  onPressed: () async {
-                    final prefs = serviceLocator<SharedPreferences>();
-                    await prefs.setBool('setup_completed', false);
-                    if (context.mounted) {
-                      context.read<AuthBloc>().add(AuthSignOutRequested());
-                    }
+                  onPressed: () {
+                    debugPrint('Sign-out button clicked');
+                    serviceLocator<SharedPreferences>().setBool('setup_completed', false);
+                    context.read<BeaconBloc>().add(BeaconStopped());
+                    context.read<AuthBloc>().add(AuthSignOutRequested());
                   },
                 ),
               ),

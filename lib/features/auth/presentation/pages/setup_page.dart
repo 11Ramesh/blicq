@@ -1,6 +1,5 @@
-import 'package:blicq/core/error/failures.dart';
 import 'package:blicq/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:blicq/features/auth/presentation/pages/login_page.dart';
+import 'package:blicq/features/auth/presentation/bloc/beacon_bloc.dart';
 import 'package:blicq/init_dependencies.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,10 +32,7 @@ class _SetupPageState extends State<SetupPage> {
     return BlocListener<SetupBloc, SetupState>(
       listener: (context, state) {
         if (state is SetupSuccess) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
-          );
+          context.read<AuthBloc>().add(AuthRefreshRequested());
         } else if (state is SetupFailure) {
           ScaffoldMessenger.of(
             context,
@@ -47,6 +43,8 @@ class _SetupPageState extends State<SetupPage> {
         appBar: AppBar(
           leading: IconButton(
             onPressed: () {
+              // Reset setup state
+              serviceLocator<SharedPreferences>().setBool('setup_completed', false);
               context.read<AuthBloc>().add(AuthSignOutRequested());
             },
             icon: const Icon(Icons.arrow_back, color: AppTheme.textDark),

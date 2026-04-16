@@ -22,6 +22,8 @@ final class AuthEmailSignInRequested extends AuthEvent {
 
 final class AuthSignOutRequested extends AuthEvent {}
 
+final class AuthRefreshRequested extends AuthEvent {}
+
 final class AuthUserChanged extends AuthEvent {
   final UserEntity? user;
   const AuthUserChanged(this.user);

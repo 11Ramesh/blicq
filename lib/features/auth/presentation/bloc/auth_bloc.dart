@@ -37,6 +37,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthAppleSignInRequested>(_onAppleSignIn);
     on<AuthEmailSignInRequested>(_onEmailSignIn);
     on<AuthSignOutRequested>(_onSignOut);
+    on<AuthRefreshRequested>(_onRefresh);
     on<AuthUserChanged>(_onUserChanged);
 
     _userSubscription = _getCurrentUser.execute().listen((user) {
@@ -91,6 +92,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     await _userSignOut(NoParams());
     emit(AuthUnauthenticated());
+  }
+
+  void _onRefresh(
+    AuthRefreshRequested event,
+    Emitter<AuthState> emit,
+  ) {
+    if (state is AuthAuthenticated) {
+      final currentState = state as AuthAuthenticated;
+      emit(AuthAuthenticated(currentState.user, isNewLogin: false));
+    }
   }
 
   void _onUserChanged(
