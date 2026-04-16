@@ -16,12 +16,14 @@ import 'package:blicq/core/common/beacon/ibeacon_service.dart';
 import 'package:blicq/core/common/beacon/flutter_ibeacon_service.dart';
 import 'package:blicq/core/common/notifications/notification_service.dart';
 import 'package:blicq/features/auth/presentation/bloc/beacon_bloc.dart';
+import 'package:blicq/features/auth/presentation/bloc/setup_bloc.dart';
 
 final serviceLocator = GetIt.instance;
 
 Future<void> initDependencies() async {
   _initAuth();
   _initBeacon();
+  _initSetup();
   
   // External
   final firebaseApp = await Firebase.initializeApp();
@@ -73,6 +75,15 @@ void _initAuth() {
       userSignInWithEmail: serviceLocator(),
       userSignOut: serviceLocator(),
       getCurrentUser: serviceLocator(),
+    ),
+  );
+}
+
+void _initSetup() {
+  serviceLocator.registerLazySingleton(
+    () => SetupBloc(
+      beaconService: serviceLocator(),
+      sharedPreferences: serviceLocator(),
     ),
   );
 }

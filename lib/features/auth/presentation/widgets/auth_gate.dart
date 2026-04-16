@@ -14,40 +14,35 @@ class AuthGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig.init(context);
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, state) {
-        if (state is AuthAuthenticated) {
-          final isSetupCompleted = serviceLocator<SharedPreferences>().getBool('setup_completed') ?? false;
-          return isSetupCompleted ? const HomePage() : const SetupPage();
-        } else if (state is AuthUnauthenticated || state is AuthInitial) {
-          return const LoginPage();
-        } else if (state is AuthLoading) {
-          return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        } else if (state is AuthError) {
-          return Scaffold(
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Error: ${state.message}'),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<AuthBloc>().add(AuthBackRequested());
-                    },
-                    child: const Text('Go Back'),
-                  ),
-                ],
-              ),
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.redAccent,
+              behavior: SnackBarBehavior.floating,
             ),
           );
         }
-        return const LoginPage();
       },
+      child: BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, state) {
+          if (state is AuthAuthenticated) {
+            final isSetupCompleted = serviceLocator<SharedPreferences>().getBool('setup_completed') ?? false;
+            return isSetupCompleted ? const HomePage() : const SetupPage();
+          } else if (state is AuthUnauthenticated || state is AuthInitial || state is AuthError) {
+            return const LoginPage();
+          } else if (state is AuthLoading) {
+            return const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+          return const LoginPage();
+        },
+      ),
     );
   }
 }

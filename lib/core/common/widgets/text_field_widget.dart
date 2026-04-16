@@ -23,6 +23,8 @@ class TextFieldWidget extends StatelessWidget {
       ),
       padding: EdgeInsets.symmetric(horizontal: SizeConfig.widthPercentage(4)),
       child: TextField(
+        enabled: false,
+        obscureText: false,
         controller: controller,
         style: TextStyle(fontSize: SizeConfig.widthPercentage(4)),
         decoration: InputDecoration(

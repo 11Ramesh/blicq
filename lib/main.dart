@@ -1,3 +1,4 @@
+import 'package:blicq/features/auth/presentation/bloc/setup_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:blicq/init_dependencies.dart';
@@ -17,6 +18,9 @@ void main() async {
         ),
         BlocProvider(
           create: (_) => serviceLocator<BeaconBloc>(),
+        ),
+        BlocProvider(
+          create: (_) => serviceLocator<SetupBloc>(),
         ),
       ],
       child: const MyApp(),
