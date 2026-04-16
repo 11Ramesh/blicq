@@ -1,3 +1,5 @@
+import 'package:blicq/core/error/failures.dart';
+import 'package:blicq/features/auth/presentation/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:blicq/core/constants/size_config.dart';
@@ -33,23 +35,26 @@ class _SetupPageState extends State<SetupPage> {
             MaterialPageRoute(builder: (context) => const HomePage()),
           );
         } else if (state is SetupFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.error)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.error)));
         }
       },
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const LoginPage()),
+            ),
             icon: const Icon(Icons.arrow_back, color: AppTheme.textDark),
           ),
           title: Text(
             'Setup',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontSize: SizeConfig.widthPercentage(4.5),
-                ),
+              fontWeight: FontWeight.bold,
+              fontSize: SizeConfig.widthPercentage(4.5),
+            ),
           ),
           centerTitle: false,
           backgroundColor: Colors.transparent,
@@ -97,7 +102,10 @@ class _SetupPageState extends State<SetupPage> {
                           height: SizeConfig.widthPercentage(18),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: AppTheme.primaryBlue, width: 2),
+                            border: Border.all(
+                              color: AppTheme.primaryBlue,
+                              width: 2,
+                            ),
                           ),
                           child: Center(
                             child: Container(
@@ -132,7 +140,9 @@ class _SetupPageState extends State<SetupPage> {
                       subtitle: 'Required for background awareness',
                       value: isLocationEnabled,
                       onChanged: (val) {
-                        context.read<SetupBloc>().add(SetupPermissionsRequested());
+                        context.read<SetupBloc>().add(
+                          SetupPermissionsRequested(),
+                        );
                       },
                     ),
                     SizedBox(height: SizeConfig.heightPercentage(2)),
@@ -141,7 +151,9 @@ class _SetupPageState extends State<SetupPage> {
                       subtitle: 'Detects nearby trusted devices',
                       value: isBluetoothEnabled,
                       onChanged: (val) {
-                        context.read<SetupBloc>().add(SetupPermissionsRequested());
+                        context.read<SetupBloc>().add(
+                          SetupPermissionsRequested(),
+                        );
                       },
                     ),
                     const Spacer(),
@@ -150,8 +162,18 @@ class _SetupPageState extends State<SetupPage> {
                       text: 'Grant Permissions',
                       icon: Icons.arrow_forward,
                       onPressed: (isLocationEnabled && isBluetoothEnabled)
-                          ? () => context.read<SetupBloc>().add(SetupPermissionsRequested())
-                          : () {},
+                          ? () => context.read<SetupBloc>().add(
+                              SetupPermissionsRequested(),
+                            )
+                          : () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Please enable all permissions to proceed.',
+                                  ),
+                                ),
+                              );
+                            },
                     ),
                     SizedBox(height: SizeConfig.heightPercentage(3)),
                     // Footer

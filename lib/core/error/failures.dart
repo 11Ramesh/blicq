@@ -8,5 +8,5 @@ class ServerFailure extends Failure {
 }
 
 class AuthFailure extends Failure {
-  AuthFailure(super.message);
+  AuthFailure([super.message = 'An unexpected server error occurred.']);
 }
