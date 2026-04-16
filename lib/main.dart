@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:blicq/init_dependencies.dart';
 import 'package:blicq/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:blicq/features/auth/presentation/bloc/beacon_bloc.dart';
 import 'package:blicq/features/auth/presentation/widgets/auth_gate.dart';
 import 'package:blicq/core/utils/theme.dart';
 
@@ -13,6 +14,9 @@ void main() async {
       providers: [
         BlocProvider(
           create: (_) => serviceLocator<AuthBloc>(),
+        ),
+        BlocProvider(
+          create: (_) => serviceLocator<BeaconBloc>(),
         ),
       ],
       child: const MyApp(),
