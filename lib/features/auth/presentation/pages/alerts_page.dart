@@ -64,9 +64,14 @@ class _AlertsPageState extends State<AlertsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: SizeConfig.heightPercentage(2)),
-              const TextWidget(text: 'Alerts & Activity'),
+              Container(
+                alignment: Alignment.center,
+                child: const TextWidget(text: 'Alerts & Activity'),
+              ),
               SizedBox(height: SizeConfig.heightPercentage(1)),
-              const SubTextWidget(text: 'Monitor real-time proximity events and node status'),
+              const SubTextWidget(
+                text: 'Monitor real-time proximity events and node status',
+              ),
               SizedBox(height: SizeConfig.heightPercentage(3)),
               _buildStatsRow(),
               SizedBox(height: SizeConfig.heightPercentage(3)),
