@@ -156,7 +156,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               ),
               AlertsPage(
                 activeScans: detectedBeacons.length,
-                nearbyBeacons: detectedBeacons.where((b) => b.proximity.toLowerCase() == 'near').length,
+                nearbyBeacons: detectedBeacons.where((b) => b.estimatedDistance <= 5.0).length,
               ),
               ProfilePage(
                 activeNodes: detectedBeacons.length,
