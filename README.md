@@ -3,15 +3,6 @@
 ## 📌 Overview
 This mobile application allows users to detect nearby Bluetooth beacons and receive alerts when they are within a specific distance. The app ensures proper connectivity setup before accessing the main features.
 
----
-
-## 🚀 Features
-
-### 🔐 Authentication
-- Users can log in using:
-  - Google (Gmail)
-  - Apple ID  
-- Secure and simple login process
 
 ---
 
