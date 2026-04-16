@@ -36,7 +36,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthGoogleSignInRequested>(_onGoogleSignIn);
     on<AuthAppleSignInRequested>(_onAppleSignIn);
     on<AuthEmailSignInRequested>(_onEmailSignIn);
-    on<AuthBackRequested>(_onSignOut);
+    on<AuthSignOutRequested>(_onSignOut);
     on<AuthUserChanged>(_onUserChanged);
 
     _userSubscription = _getCurrentUser.execute().listen((user) {
@@ -85,7 +85,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _onSignOut(
-    AuthBackRequested event,
+    AuthSignOutRequested event,
     Emitter<AuthState> emit,
   ) async {
     emit(AuthLoading());

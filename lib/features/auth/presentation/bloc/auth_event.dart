@@ -20,7 +20,7 @@ final class AuthEmailSignInRequested extends AuthEvent {
   List<Object?> get props => [email, password];
 }
 
-final class AuthBackRequested extends AuthEvent {}
+final class AuthSignOutRequested extends AuthEvent {}
 
 final class AuthUserChanged extends AuthEvent {
   final UserEntity? user;

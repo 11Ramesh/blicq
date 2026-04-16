@@ -33,11 +33,6 @@ class _SetupPageState extends State<SetupPage> {
     return BlocListener<SetupBloc, SetupState>(
       listener: (context, state) {
         if (state is SetupSuccess) {
-          if (context.mounted) {
-            context.read<AuthBloc>().add(AuthBackRequested());
-          }
-          final prefs = serviceLocator<SharedPreferences>();
-          prefs.setBool('setup_completed', false);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const HomePage()),
@@ -51,10 +46,9 @@ class _SetupPageState extends State<SetupPage> {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const LoginPage()),
-            ),
+            onPressed: () {
+              context.read<AuthBloc>().add(AuthSignOutRequested());
+            },
             icon: const Icon(Icons.arrow_back, color: AppTheme.textDark),
           ),
           title: Text(

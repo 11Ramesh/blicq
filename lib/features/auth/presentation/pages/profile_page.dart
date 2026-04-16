@@ -83,7 +83,7 @@ class ProfilePage extends StatelessWidget {
                     final prefs = serviceLocator<SharedPreferences>();
                     await prefs.setBool('setup_completed', false);
                     if (context.mounted) {
-                      context.read<AuthBloc>().add(AuthBackRequested());
+                      context.read<AuthBloc>().add(AuthSignOutRequested());
                     }
                   },
                 ),
