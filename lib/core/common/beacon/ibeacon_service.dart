@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 /// A domain model for representing a Beacon, making the app agnostic of third-party implementations.
 class BeaconModel {
@@ -7,6 +8,7 @@ class BeaconModel {
   final int minor;
   final double accuracy;
   final int rssi;
+  final int? txPower;
   final String proximity;
 
   BeaconModel({
@@ -16,7 +18,24 @@ class BeaconModel {
     required this.accuracy,
     required this.rssi,
     required this.proximity,
+    this.txPower,
   });
+
+
+  double get estimatedDistance {
+    if (txPower == null || txPower == 0) return accuracy;
+    
+    final double ratio = rssi.toDouble() / txPower!.toDouble();
+    double distance;
+    
+    if (ratio < 1.0) {
+      distance = pow(ratio, 10).toDouble();
+    } else {
+      distance = (0.89976) * pow(ratio, 7.7095) + 0.111;
+    }
+    
+    return double.parse(distance.toStringAsFixed(2));
+  }
 
   @override
   String toString() {

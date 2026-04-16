@@ -22,7 +22,9 @@ class ScanPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: SizeConfig.widthPercentage(5)),
+        padding: EdgeInsets.symmetric(
+          horizontal: SizeConfig.widthPercentage(5),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -65,7 +67,10 @@ class ScanPage extends StatelessWidget {
           const SizedBox(height: 5),
           const TextWidget(text: 'Precision Scanning'),
           SizedBox(height: SizeConfig.heightPercentage(1)),
-          const SubTextWidget(text: 'Actively monitoring Bluetooth Low Energy signals in your immediate perimeter.'),
+          const SubTextWidget(
+            text:
+                'Actively monitoring Bluetooth Low Energy signals in your immediate perimeter.',
+          ),
         ],
       ),
     );
@@ -110,7 +115,10 @@ class ScanPage extends StatelessWidget {
           label: const Text('REFRESH'),
           style: TextButton.styleFrom(
             foregroundColor: AppTheme.primaryBlue,
-            textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
+            textStyle: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 10,
+            ),
           ),
         ),
       ],
@@ -124,9 +132,16 @@ class ScanPage extends StatelessWidget {
           padding: const EdgeInsets.only(top: 40),
           child: Column(
             children: [
-              Icon(Icons.bluetooth_searching, size: 50, color: Colors.grey[300]),
+              Icon(
+                Icons.bluetooth_searching,
+                size: 50,
+                color: Colors.grey[300],
+              ),
               const SizedBox(height: 10),
-              Text('No beacons detected nearby', style: TextStyle(color: Colors.grey[400])),
+              Text(
+                'No beacons detected nearby',
+                style: TextStyle(color: Colors.grey[400]),
+              ),
             ],
           ),
         ),
@@ -146,7 +161,7 @@ class ScanPage extends StatelessWidget {
 
   Widget _buildBeaconCard(BeaconModel beacon) {
     final proximityColor = _getProximityColor(beacon.proximity);
-    
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -179,10 +194,37 @@ class ScanPage extends StatelessWidget {
                   _buildProximityTag(beacon.proximity, proximityColor),
                 ],
               ),
+              if (beacon.estimatedDistance <= 5.0)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.stars,
+                        color: AppTheme.primaryBlue,
+                        size: 14,
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        'PRECISION RANGE: WITHIN 5M',
+                        style: TextStyle(
+                          color: AppTheme.primaryBlue,
+                          fontWeight: FontWeight.bold,
+                          fontSize: SizeConfig.widthPercentage(2.5),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               const SizedBox(height: 10),
               Text(
-                'UUID: ${beacon.uuid}',
-                style: TextStyle(color: Colors.grey, fontSize: SizeConfig.widthPercentage(2.5)),
+                (beacon.estimatedDistance <= 5.0)
+                    ? 'UUID: ${beacon.uuid.substring(0, 20)}.....'
+                    : 'UUID: ${beacon.uuid}',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: SizeConfig.widthPercentage(2.5),
+                ),
               ),
               const SizedBox(height: 15),
               Row(
@@ -201,13 +243,17 @@ class ScanPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  'DISTANCE',
-                  style: TextStyle(color: Colors.grey, fontSize: SizeConfig.widthPercentage(2.5), fontWeight: FontWeight.bold),
+                  'PRECISION DISTANCE',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: SizeConfig.widthPercentage(2.5),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Text(
-                  '${beacon.accuracy.toStringAsFixed(1)} m',
+                  '${beacon.estimatedDistance.toStringAsFixed(2)} m',
                   style: TextStyle(
-                    color: AppTheme.textDark,
+                    color: AppTheme.primaryBlue,
                     fontWeight: FontWeight.bold,
                     fontSize: SizeConfig.widthPercentage(5),
                   ),
@@ -216,7 +262,7 @@ class ScanPage extends StatelessWidget {
                 Icon(Icons.location_on, color: proximityColor, size: 18),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
@@ -246,11 +292,19 @@ class ScanPage extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(color: Colors.grey, fontSize: 8, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Colors.grey,
+            fontSize: 8,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         Text(
           value,
-          style: TextStyle(color: AppTheme.textDark, fontWeight: FontWeight.bold, fontSize: SizeConfig.widthPercentage(3.5)),
+          style: TextStyle(
+            color: AppTheme.textDark,
+            fontWeight: FontWeight.bold,
+            fontSize: SizeConfig.widthPercentage(3.5),
+          ),
         ),
       ],
     );

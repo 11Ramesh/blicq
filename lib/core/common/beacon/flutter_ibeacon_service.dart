@@ -37,6 +37,7 @@ class FlutterIBeaconService implements IBeaconService {
           minor: beacon.id.minorId,
           accuracy: beacon.accuracy,
           rssi: beacon.rssi,
+          txPower: beacon.txPower,
           proximity: _mapProximity(beacon.proximity),
         )).toList();
         _beaconController.add(models);

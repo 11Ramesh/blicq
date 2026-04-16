@@ -6,6 +6,7 @@ import 'package:blicq/features/auth/presentation/pages/scan_page.dart';
 import 'package:blicq/features/auth/presentation/pages/alerts_page.dart';
 import 'package:blicq/features/auth/presentation/pages/profile_page.dart';
 import 'package:blicq/core/common/beacon/ibeacon_service.dart';
+import 'package:blicq/core/common/notifications/notification_service.dart';
 import 'package:blicq/init_dependencies.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,22 +16,34 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   int _currentIndex = 0;
+  bool _isInBackground = false;
 
   // Beacon State shared between Scan and Profile
   final IBeaconService _beaconService = serviceLocator<IBeaconService>();
+  final NotificationService _notificationService = serviceLocator<NotificationService>();
   StreamSubscription? _beaconSubscription;
   List<BeaconModel> _detectedBeacons = [];
   int _strongestRSSI = -100;
   final Map<String, DateTime> _lastSeenTimes = {};
   final Duration _persistenceTimeout = const Duration(seconds: 10);
 
+  // Notification tracking
+  final Set<String> _notifiedBeacons = {};
+  final Set<String> _nearFiveMeterBeacons = {};
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _checkBluetoothStatus();
     _startScanning();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    _isInBackground = state == AppLifecycleState.paused || state == AppLifecycleState.inactive;
   }
 
   Future<void> _checkBluetoothStatus() async {
@@ -78,8 +91,49 @@ class _HomePageState extends State<HomePage> {
     _beaconSubscription = _beaconService.startScanning().listen((newBeacons) {
       if (!mounted) return;
 
+      final now = DateTime.now();
+      for (final beacon in newBeacons) {
+        final key = '${beacon.uuid}_${beacon.major}_${beacon.minor}';
+        
+        // 1. Detection Notification (only once per detection session)
+        if (!_notifiedBeacons.contains(key)) {
+          _notifiedBeacons.add(key);
+          if (_isInBackground) {
+            _notificationService.showNotification(
+              id: key.hashCode,
+              title: 'Beacon Detected',
+              body: 'A known beacon (${beacon.uuid.substring(0, 8)}) is nearby.',
+            );
+          }
+        }
+
+        // 2. 5-Meter Mark Logic
+        if (beacon.estimatedDistance <= 5.0) {
+          if (!_nearFiveMeterBeacons.contains(key)) {
+            _nearFiveMeterBeacons.add(key);
+            _notificationService.showNotification(
+              id: key.hashCode + 1,
+              title: 'Proximity Alert',
+              body: 'You are within 5 meters of beacon ${beacon.uuid.substring(0, 8)}!',
+            );
+            // Also show a SnackBar if the app is in foreground
+            if (!_isInBackground) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Precision Alert: Within 5m of ${beacon.uuid.substring(0, 8)}'),
+                  backgroundColor: AppTheme.primaryBlue,
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
+          }
+        } else {
+          // Reset 5-meter mark if user moves away
+          _nearFiveMeterBeacons.remove(key);
+        }
+      }
+
       setState(() {
-        final now = DateTime.now();
         for (final beacon in newBeacons) {
           final key = '${beacon.uuid}_${beacon.major}_${beacon.minor}';
           _lastSeenTimes[key] = now;
@@ -96,8 +150,12 @@ class _HomePageState extends State<HomePage> {
         _detectedBeacons.removeWhere((beacon) {
           final key = '${beacon.uuid}_${beacon.major}_${beacon.minor}';
           final lastSeen = _lastSeenTimes[key];
-          return lastSeen == null ||
-              now.difference(lastSeen) > _persistenceTimeout;
+          final shouldRemove = lastSeen == null || now.difference(lastSeen) > _persistenceTimeout;
+          if (shouldRemove) {
+            _notifiedBeacons.remove(key);
+            _nearFiveMeterBeacons.remove(key);
+          }
+          return shouldRemove;
         });
 
         if (_detectedBeacons.isNotEmpty) {

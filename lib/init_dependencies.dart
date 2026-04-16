@@ -14,6 +14,7 @@ import 'package:blicq/features/auth/domain/usecases/user_sign_out.dart';
 import 'package:blicq/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blicq/core/common/beacon/ibeacon_service.dart';
 import 'package:blicq/core/common/beacon/flutter_ibeacon_service.dart';
+import 'package:blicq/core/common/notifications/notification_service.dart';
 
 final serviceLocator = GetIt.instance;
 
@@ -32,6 +33,11 @@ Future<void> initDependencies() async {
   final ibeaconService = FlutterIBeaconService();
   await ibeaconService.initialize();
   serviceLocator.registerLazySingleton<IBeaconService>(() => ibeaconService);
+
+  // Notification Service
+  final notificationService = NotificationService();
+  await notificationService.initialize();
+  serviceLocator.registerLazySingleton(() => notificationService);
 }
 
 void _initAuth() {
