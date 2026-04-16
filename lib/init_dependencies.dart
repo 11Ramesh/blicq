@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:blicq/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:blicq/features/auth/data/repositories/auth_repository_impl.dart';
@@ -26,22 +27,47 @@ Future<void> initDependencies() async {
   _initSetup();
   
   // External
-  final firebaseApp = await Firebase.initializeApp();
-  final sharedPreferences = await SharedPreferences.getInstance();
-  serviceLocator.registerLazySingleton(() => sharedPreferences);
-  await GoogleSignIn.instance.initialize();
+  try {
+    await Firebase.initializeApp();
+  } catch (e) {
+    debugPrint("Firebase Initialization Error: $e");
+  }
+
+  try {
+    final sharedPreferences = await SharedPreferences.getInstance();
+    serviceLocator.registerLazySingleton(() => sharedPreferences);
+  } catch (e) {
+    debugPrint("SharedPreferences Error: $e");
+  }
+
+  try {
+    // Current google_sign_in 7.x+ requires explicit initialization
+    await GoogleSignIn.instance.initialize();
+  } catch (e) {
+    debugPrint("Google Sign-In Initialization Error: $e");
+  }
+
   serviceLocator.registerLazySingleton(() => FirebaseAuth.instance);
   serviceLocator.registerLazySingleton(() => GoogleSignIn.instance);
 
   // iBeacon Service
-  final ibeaconService = FlutterIBeaconService();
-  await ibeaconService.initialize();
-  serviceLocator.registerLazySingleton<IBeaconService>(() => ibeaconService);
+  try {
+    final ibeaconService = FlutterIBeaconService();
+    await ibeaconService.initialize();
+    serviceLocator.registerLazySingleton<IBeaconService>(() => ibeaconService);
+  } catch (e) {
+    debugPrint("iBeacon Service Error: $e");
+    // Fallback if needed
+  }
 
   // Notification Service
-  final notificationService = NotificationService();
-  await notificationService.initialize();
-  serviceLocator.registerLazySingleton(() => notificationService);
+  try {
+    final notificationService = NotificationService();
+    await notificationService.initialize();
+    serviceLocator.registerLazySingleton(() => notificationService);
+  } catch (e) {
+    debugPrint("Notification Service Error: $e");
+  }
 }
 
 void _initAuth() {
